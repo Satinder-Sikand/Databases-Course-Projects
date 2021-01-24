@@ -1,0 +1,13 @@
+with visit_count(login, realm, amount) as
+    (
+        select v.login, v.realm, count(*)
+        from Visit as v
+        group by v.login, v.realm
+        having count(*) > 1
+    )
+
+select v.login, v.realm, vcount.amount as visits, ((max(v.day) - min(v.day))::numeric / (count(day) - 1))::numeric(5,2) as frequency
+from visit_count as vcount, Visit as v
+where v.login = vcount.login and v.realm = vcount.realm
+group by v.login, v.realm, vcount.amount
+order by v.login, v.realm

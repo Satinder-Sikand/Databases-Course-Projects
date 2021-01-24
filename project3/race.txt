@@ -1,0 +1,23 @@
+with sum_avatar_genders(realm, race, gender, total) as
+    (
+        select l.realm, av.race, av.gender, sum(t.sql)
+        from Treasure as t, Loot as l, Actor as ac, Visit as v, Avatar as av
+        where t.treasure = l.treasure and l.login = ac.login and l.theme = ac.theme and l.day = ac.day
+            and v.login = l.login and v.realm = l.realm and v.day = l.day
+            and av.name = v.name and av.login = l.login
+        group by av.race, av.gender,  l.realm
+        order by  l.realm, av.race, av.gender
+    ),
+
+     max_sum_rr(realm, race, total) as
+         (
+             select sag.realm, sag.race, max(sag.total)
+             from sum_avatar_genders as sag
+             group by sag.realm, sag.race
+         )
+
+select sag.realm, sag.race, sag.gender, sag.total
+from sum_avatar_genders as sag, max_sum_rr as msrr
+where sag.total = msrr.total and sag.race = msrr.race
+order by sag.realm, sag.race, sag.gender
+

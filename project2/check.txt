@@ -1,0 +1,12 @@
+Name: Satinder Sikand
+Student#: 215558661
+
+    sin    |        time         |    testtype    |     action      |  testcentre  | offered
+-----------+---------------------+----------------+-----------------+--------------+---------
+ 123456789 | 2020-12-20 12:15:00 | molecular test | Quarantine      | Test Centre1 | yes
+ 111111111 | 2020-12-20 12:45:00 | molecular test | Hospitalize     | Test Centre2 | yes
+ 222222222 | 2020-12-20 12:45:00 | antibody test  | Hospitalize     | Test Centre1 | yes
+ 333333333 | 2020-12-20 12:45:00 | antibody test  | Quarantine      | Test Centre3 | yes
+ 444444444 | 2020-12-20 12:45:00 | rapid test     | Further Testing | Test Centre2 | yes
+ 444444444 | 2020-12-20 12:45:00 | molecular test | Quarantine      | Test Centre2 | yes
+(6 rows)

@@ -1,0 +1,5 @@
+select distinct l.realm, l.day, l.theme
+from Loot as l, Quest as q
+where q.succeeded is not null and l.theme = q.theme and l.realm = q.realm and l.day = q.day
+    and lower(l.treasure) like concat('%', 'gold', '%')
+order by l.day, l.realm, l.theme;

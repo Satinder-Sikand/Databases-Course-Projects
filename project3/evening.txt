@@ -1,0 +1,4 @@
+select distinct q.theme, q.day, q.realm, q.succeeded
+from Quest as q
+where q.succeeded > '20:00:00' or q.succeeded is null
+order by q.theme, q.day, q.realm;

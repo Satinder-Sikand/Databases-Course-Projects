@@ -1,0 +1,38 @@
+with all_aav_quests(login, name, day, realm, theme) as
+         (
+             select ac.login, av.name, v.day, v.realm, ac.theme
+             from actor as ac, visit as v, avatar as av
+             where ac.login = v.login and ac.realm = v.realm and ac.day = v.day
+                and av.login = ac.login and av.name = v.name
+         )
+
+select distinct aav1.login as companion1, aav1.name as fname, aav1.realm, aav2.login as companion2, aav2.name as lname
+from all_aav_quests aav1, all_aav_quests as aav2
+where aav1.login < aav2.login and aav1.theme = aav2.theme and aav1.realm = aav2.realm
+    and not exists (
+        (
+            (
+                select aav3.realm, aav3.theme, aav3.day
+                from all_aav_quests as aav3
+                where aav3.login = aav1.login and aav3.name = aav1.name and aav3.realm = aav1.realm
+            ) except
+            (
+                select aav3.realm, aav3.theme, aav3.day
+                from all_aav_quests as aav3
+                where aav3.login = aav2.login and aav3.name = aav2.name and aav3.realm = aav2.realm
+            )
+        ) union
+        (
+            (
+                select aav3.realm, aav3.theme, aav3.day
+                from all_aav_quests as aav3
+                where aav3.login = aav2.login and aav3.name = aav2.name and aav3.realm = aav2.realm
+            ) except
+            (
+                select aav3.realm, aav3.theme, aav3.day
+                from all_aav_quests as aav3
+                where aav3.login = aav1.login and aav3.name = aav1.name and aav3.realm = aav1.realm
+                )
+        )
+    )
+order by  aav1.realm, aav1.login, aav1.name, aav2.login, aav2.name

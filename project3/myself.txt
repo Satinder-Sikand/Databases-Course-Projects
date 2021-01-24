@@ -1,0 +1,4 @@
+select p.login, p.name, p.gender, p.address, p.joined
+from Player as p
+where lower(p.name) LIKE concat('%', lower(p.login), '%')
+order by p.login asc;

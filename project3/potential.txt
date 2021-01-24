@@ -1,0 +1,45 @@
+with avatar_quests_succeeded(login, name, race, day, realm, theme) as
+    (
+        select av.login, av.name, av.race, q.day, q.realm, q.theme as t
+        from Avatar as av, Actor as ac, Visit as v, Quest as q
+        where ac.login = v.login and ac.realm = v.realm and ac.day = v.day and ac.theme = q.theme
+            and q.day = v.day and q.realm = v.realm and q.succeeded is not null
+            and av.name = v.name and av.login = v.login
+        group by  av.login, av.name, av.race, q.day, q.realm, q.theme
+    ),
+     max_loot(realm, day, theme, hvalue) as
+         (
+             select l.realm, l.day, l.theme, max(t.sql)
+             from Treasure as t, Loot as l
+             where t.treasure = l.treasure
+             group by l.realm, l.day, l.theme
+         ),
+     quest_count_lnr(login, name, race, total) as
+         (
+             select aqs.login, aqs.name, aqs.race, count(*)
+             from avatar_quests_succeeded as aqs
+             group by aqs.login, aqs.name, aqs.race
+         ),
+     avatar_quests_sql_total(login, name, total) as
+         (
+             select aqs.login, aqs.name, sum(ml.hvalue)
+             from avatar_quests_succeeded as aqs, max_loot as ml
+             where aqs.theme = ml.theme and aqs.day = ml.day and aqs.realm = ml.realm
+             group by aqs.login, aqs.name
+         )
+
+
+select a.login, a.name, a.race,
+       coalesce(
+               (select distinct aqsl.total
+                from avatar_quests_sql_total as aqsl
+                where aqsl.login = a.login and aqsl.name = a.name
+               ), 0) as earned,
+       coalesce(
+               (select distinct qcl.total
+                from quest_count_lnr as qcl
+                where qcl.login = a.login and qcl.name = a.name
+               ), 0) as quests
+from Avatar as a
+order by a.login, a.name
+

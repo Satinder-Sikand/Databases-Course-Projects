@@ -1,0 +1,8 @@
+select distinct p.login, p.name, p.gender, (
+    select count(*)
+    from Avatar as a2
+    where a2.name = p.name
+    )
+from Player as p, Avatar as a
+where p.login = a.login and p.gender <> a.gender
+order by p.login

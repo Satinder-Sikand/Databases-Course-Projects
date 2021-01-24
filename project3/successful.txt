@@ -1,0 +1,18 @@
+with all_Quests (theme, amount) as
+    (
+        select q.theme, count(*)
+        from Quest as q
+        group by q.theme
+    ),
+     success_only (theme, amount) as
+    (
+        select q.theme, count(*)
+        from Quest as q
+        where q.succeeded is not null
+        group by theme
+    )
+
+select sq.theme, sq.amount as quests
+from all_Quests as aq, success_only as sq
+where sq.theme = aq.theme and sq.amount = aq.amount
+order by sq.theme
